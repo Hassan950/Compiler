@@ -25,7 +25,7 @@ map<string, int> sym;
 /* declare tokens */
 %token <iValue> INTEGER
 %token <sIndex> VARIABLE
-%token WHILE IF PRINT
+%token WHILE FOR IF PRINT
 %token CONST VAR
 %nonassoc IFX
 %nonassoc ELSE
@@ -39,7 +39,7 @@ map<string, int> sym;
 %right NOT 
 %nonassoc UMINUS
 
-%type <nPtr> stmt expr stmt_list rhs
+%type <nPtr> stmt single_stmt expr stmt_list rhs declaration opt_declaration assignment
 
 %%
 
@@ -56,16 +56,35 @@ stmt:
   ';' { $$ = constructOperationNode(';', 2, NULL, NULL); }
   | expr ';' { $$ = $1; }
   | PRINT expr ';' { $$ = constructOperationNode(PRINT, 1, $2); }
-
-  | VAR VARIABLE ';' { $$ = constructIdentifierNode($2); }
-  | VAR VARIABLE '=' rhs ';' { $$ = constructOperationNode('=', 2, constructIdentifierNode($2), $4); }
-  | VARIABLE '=' rhs ';' { $$ = constructOperationNode('=', 2, constructIdentifierNode($1), $3); }
-  | CONST VARIABLE '=' rhs ';' { $$ = constructOperationNode('=', 2, constructIdentifierNode($2), $4); }
-  
+  | declaration ';' { $$ = $1; }
   | WHILE '(' expr ')' stmt { $$ = constructOperationNode(WHILE, 2, $3, $5); }
+  | FOR '(' opt_declaration ';' single_stmt ';' assignment ')' stmt { $$ = constructOperationNode(FOR, 4, $3, $5, $7, $9); }
   | IF '(' expr ')' stmt %prec IFX { $$ = constructOperationNode(IF, 2, $3, $5); }
   | IF '(' expr ')' stmt ELSE stmt { $$ = constructOperationNode(IF, 3, $3, $5, $7); }
   | '{' stmt_list '}' { $$ = $2; }
+  ;
+
+single_stmt:
+  { $$ = constructOperationNode(';', 2, NULL, NULL); }
+  | PRINT expr { $$ = constructOperationNode(PRINT, 1, $2); }
+  | declaration { $$ = $1; }
+  | expr { $$ = $1; }
+  ;
+
+assignment: { $$ = constructOperationNode(';', 2, NULL, NULL); }
+  | VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($1), $3); }
+  ;
+
+declaration:
+  VAR VARIABLE { $$ = constructIdentifierNode($2); }
+  | VAR VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($2), $4); }
+  | VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($1), $3); }
+  | CONST VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($2), $4); }
+  ;
+
+opt_declaration:
+  { $$ = constructOperationNode(';', 2, NULL, NULL); }
+  | declaration { $$ = $1; }
   ;
 
 rhs:

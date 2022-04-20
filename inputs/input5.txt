@@ -1,0 +1,11 @@
+for(var x = 3;x >= 10; x = x - 1) {
+  print i;
+  x = x + 2;
+}
+
+var i = 0;
+
+for(; i < 10;) {
+  print i;
+}
+

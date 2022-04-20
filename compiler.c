@@ -28,6 +28,19 @@ int exec(Node *p)
       printf("\tjmp\tL%03d\n", lbl1);
       printf("L%03d:\n", lbl2);
       break;
+    case FOR:
+      exec(p->opr.p_operands[0]); // declaration / initialization
+      printf("L%03d:\n", lbl1 = lbl++);
+
+      exec(p->opr.p_operands[1]); // expression (condition)
+      printf("\tjnz\tL%03d\n", lbl2 = lbl++);
+
+      exec(p->opr.p_operands[3]); // statement
+
+      exec(p->opr.p_operands[2]); // assignment (increment/decrement)
+      printf("\tjmp\tL%03d\n", lbl1);
+      printf("L%03d:\n", lbl2);
+      break;
     case IF:
       exec(p->opr.p_operands[0]);
       if (p->opr.numberOfOperands > 2)

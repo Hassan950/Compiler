@@ -22,6 +22,7 @@
 "or" { return OR; }
 "not" { return NOT; }
 "while" { return WHILE; }
+"for" { return FOR; }
 "if" { return IF; }
 "else" { return ELSE; }
 "print" { return PRINT; }
