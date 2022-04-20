@@ -1,0 +1,7 @@
+	push	1
+	not
+	push	0
+	and
+	push	1
+	or
+	pop	x

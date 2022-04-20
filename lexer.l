@@ -1,8 +1,6 @@
 %{
 # include "structs.h"
 # include "parser.tab.h"
-
-int identifiersIndex = 0;
 %}
 
 
@@ -20,6 +18,9 @@ int identifiersIndex = 0;
 "<=" { return LE; }
 "==" { return EQ; }
 "!=" { return NE; }
+"and" { return AND; }
+"or" { return OR; }
+"not" { return NOT; }
 "while" { return WHILE; }
 "if" { return IF; }
 "else" { return ELSE; }
@@ -30,6 +31,7 @@ int identifiersIndex = 0;
 [a-zA-Z_][a-zA-Z0-9_]* { 
     /* variables */
     yylval.sIndex = strdup(yytext);
+    sym[yylval.sIndex] = 0;
     return VARIABLE; 
 }
 

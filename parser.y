@@ -12,8 +12,8 @@ void freeNode(Node *p);
 int exec(Node *p);
 int yylex(void);
 
-void yyerror(char *s);
-int sym[1024];
+void yyerror(const char *s);
+map<string, int> sym;
 %}
 
 %union {
@@ -30,9 +30,13 @@ int sym[1024];
 %nonassoc IFX
 %nonassoc ELSE
 
+%right '='
+%left OR
+%left AND
 %left GE LE EQ NE '>' '<'
 %left '+' '-'
 %left '*' '/'
+%right NOT 
 %nonassoc UMINUS
 
 %type <nPtr> stmt expr stmt_list rhs
@@ -52,22 +56,22 @@ stmt:
   ';' { $$ = constructOperationNode(';', 2, NULL, NULL); }
   | expr ';' { $$ = $1; }
   | PRINT expr ';' { $$ = constructOperationNode(PRINT, 1, $2); }
+
+  | VAR VARIABLE ';' { $$ = constructIdentifierNode($2); }
+  | VAR VARIABLE '=' rhs ';' { $$ = constructOperationNode('=', 2, constructIdentifierNode($2), $4); }
   | VARIABLE '=' rhs ';' { $$ = constructOperationNode('=', 2, constructIdentifierNode($1), $3); }
-  | type VARIABLE '=' rhs ';' { $$ = constructOperationNode('=', 2, constructIdentifierNode($2), $4); }
+  | CONST VARIABLE '=' rhs ';' { $$ = constructOperationNode('=', 2, constructIdentifierNode($2), $4); }
+  
   | WHILE '(' expr ')' stmt { $$ = constructOperationNode(WHILE, 2, $3, $5); }
   | IF '(' expr ')' stmt %prec IFX { $$ = constructOperationNode(IF, 2, $3, $5); }
   | IF '(' expr ')' stmt ELSE stmt { $$ = constructOperationNode(IF, 3, $3, $5, $7); }
   | '{' stmt_list '}' { $$ = $2; }
   ;
 
-type: CONST
-  | VAR
-  ;
-
 rhs:
   expr { $$ = $1; }
   | VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($1), $3); }
-  | '(' rhs ')' { $$ = $2; }
+  | '(' VARIABLE '=' rhs ')' { $$ = constructOperationNode('=', 2, constructIdentifierNode($2), $4); }
   ;
 
 stmt_list:
@@ -79,6 +83,7 @@ expr:
   INTEGER { $$ = constructConstantNode($1); }
   | VARIABLE { $$ = constructIdentifierNode($1); }
   | '-' expr %prec UMINUS { $$ = constructOperationNode(UMINUS, 1, $2); }
+  | NOT expr { $$ = constructOperationNode(NOT, 1, $2); }
   | expr '+' expr { $$ = constructOperationNode('+', 2, $1, $3); }
   | expr '-' expr { $$ = constructOperationNode('-', 2, $1, $3); }
   | expr '*' expr { $$ = constructOperationNode('*', 2, $1, $3); }
@@ -89,6 +94,8 @@ expr:
   | expr LE expr { $$ = constructOperationNode(LE, 2, $1, $3); }
   | expr NE expr { $$ = constructOperationNode(NE, 2, $1, $3); }
   | expr EQ expr { $$ = constructOperationNode(EQ, 2, $1, $3); }
+  | expr AND expr { $$ = constructOperationNode(AND, 2, $1, $3); }
+  | expr OR expr { $$ = constructOperationNode(OR, 2, $1, $3); }
   | '(' expr ')' { $$ = $2; }
 %%
 #define SIZEOF_NODETYPE ((char *)&p->con - (char *)p)
@@ -99,7 +106,7 @@ Node *constructConstantNode(int value) {
 
   /* allocate Node */
   nodeSize = SIZEOF_NODETYPE + sizeof(ConstantNode);
-  if ((p = malloc(nodeSize)) == NULL)
+  if ((p = (Node*)malloc(nodeSize)) == NULL)
     yyerror("out of memory");
 
   /* copy information */
@@ -113,7 +120,7 @@ Node *constructIdentifierNode(char* i) {
   size_t nodeSize;
   /* allocate Node */
   nodeSize = SIZEOF_NODETYPE + sizeof(IdentifierNode);
-  if ((p = malloc(nodeSize)) == NULL)
+  if ((p = (Node*)malloc(nodeSize)) == NULL)
     yyerror("out of memory");
 
   /* copy information */
@@ -131,12 +138,12 @@ Node *constructOperationNode(int oper, int nops, ...) {
   /* allocate Node */
   nodeSize = SIZEOF_NODETYPE + sizeof(OperationNode) +
     (nops - 1) * sizeof(Node*);
-  if ((p = malloc(nodeSize)) == NULL)
+  if ((p = (Node*)malloc(nodeSize)) == NULL)
     yyerror("out of memory");
 
   /* copy information */
   p->type = OPERATION;
-  p->opr.operator = oper;
+  p->opr.symbol = oper;
   p->opr.numberOfOperands = nops;
   va_start(ap, nops);
   for (i = 0; i < nops; i++)
@@ -156,7 +163,7 @@ void freeNode(Node *p) {
   free (p);
 }
 
-void yyerror(char *s) {
+void yyerror(const char *s) {
   fprintf(stdout, "%s\n", s);
 }
 int main(void) {

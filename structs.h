@@ -1,4 +1,9 @@
 #include <string.h>
+#include <string>
+#include <map>
+#include <iostream>
+using std::map;
+using std::string;
 
 typedef enum
 {
@@ -19,7 +24,7 @@ typedef struct
 /* operators */
 typedef struct
 {
-  int operator;
+  int symbol;
   int numberOfOperands;
   struct NodeTag *p_operands[1]; /* expandable */
 } OperationNode;
@@ -35,4 +40,4 @@ typedef struct NodeTag
     OperationNode opr; /* operators */
   };
 } Node;
-extern int sym[1024];
+extern map<string, int> sym;

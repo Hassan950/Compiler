@@ -18,7 +18,7 @@ int exec(Node *p)
     printf("\tpush\t%s\n", p->id.name);
     break;
   case OPERATION:
-    switch (p->opr.operator)
+    switch (p->opr.symbol)
     {
     case WHILE:
       printf("L%03d:\n", lbl1 = lbl++);
@@ -54,7 +54,7 @@ int exec(Node *p)
       break;
     case '=':
       exec(p->opr.p_operands[1]);
-      if (p->opr.p_operands[1]->type == OPERATION && p->opr.p_operands[1]->opr.operator== '=')
+      if (p->opr.p_operands[1]->type == OPERATION && p->opr.p_operands[1]->opr.symbol == '=')
       {
         printf("\tpush\t%s\n", p->opr.p_operands[1]->opr.p_operands[0]->id.name);
       }
@@ -64,10 +64,14 @@ int exec(Node *p)
       exec(p->opr.p_operands[0]);
       printf("\tneg\n");
       break;
+    case NOT:
+      exec(p->opr.p_operands[0]);
+      printf("\tnot\n");
+      break;
     default:
       exec(p->opr.p_operands[0]);
       exec(p->opr.p_operands[1]);
-      switch (p->opr.operator)
+      switch (p->opr.symbol)
       {
       case '+':
         printf("\tadd\n");
@@ -98,6 +102,12 @@ int exec(Node *p)
         break;
       case EQ:
         printf("\tcompEQ\n");
+        break;
+      case AND:
+        printf("\tand\n");
+        break;
+      case OR:
+        printf("\tor\n");
         break;
       }
     }
