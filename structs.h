@@ -1,36 +1,38 @@
+#include <string.h>
+
 typedef enum
 {
-  typeCon,
-  typeId,
-  typeOpr
-} nodeEnum;
+  CONSTANT,
+  IDENTIFIER,
+  OPERATION
+} NodeTypes;
 /* constants */
 typedef struct
 {
   int value; /* value of constant */
-} conNodeType;
+} ConstantNode;
 /* identifiers */
 typedef struct
 {
-  int i; /* subscript to sym array */
-} idNodeType;
+  char *name;
+} IdentifierNode;
 /* operators */
 typedef struct
 {
-  int oper;                  /* operator */
-  int nops;                  /* number of operands */
-  struct nodeTypeTag *op[1]; /* operands (expandable) */
-} oprNodeType;
-typedef struct nodeTypeTag
+  int operator;
+  int numberOfOperands;
+  struct NodeTag *p_operands[1]; /* expandable */
+} OperationNode;
+typedef struct NodeTag
 {
-  nodeEnum type; /* type of node */
-  /* union must be last entry in nodeType */
-  /* because operNodeType may dynamically increase */
+  NodeTypes type; /* type of Node */
+  /* union must be last entry in Node */
+  /* because OperationNode may dynamically increase */
   union
   {
-    conNodeType con; /* constants */
-    idNodeType id;   /* identifiers */
-    oprNodeType opr; /* operators */
+    ConstantNode con;  /* constants */
+    IdentifierNode id; /* identifiers */
+    OperationNode opr; /* operators */
   };
-} nodeType;
-extern int sym[26];
+} Node;
+extern int sym[1024];

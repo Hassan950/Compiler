@@ -4,8 +4,9 @@ SCANNER_OUTPUT ?= lex
 PARSER_OUTPUT ?= parser
 EXE_OUTPUT ?= output
 
-INPUT_FILE ?= inputs/input1.txt
-OUTPUT_FILE ?= outputs/output1.txt
+FILE_SEQ ?= 1
+INPUT_FILE ?= inputs/input$(FILE_SEQ).txt
+OUTPUT_FILE ?= outputs/output$(FILE_SEQ).txt
 
 
 all: scan parse build
@@ -27,3 +28,5 @@ run:
 
 test:
 	./build/$(EXE_OUTPUT).exe < $(INPUT_FILE) > $(OUTPUT_FILE)
+
+bt: all test

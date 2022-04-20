@@ -1,7 +1,10 @@
 %{
 # include "structs.h"
 # include "parser.tab.h"
+
+int identifiersIndex = 0;
 %}
+
 
 %%
 
@@ -22,9 +25,11 @@
 "else" { return ELSE; }
 "print" { return PRINT; }
 
+"const" { return CONST; }
+"var" { return VAR; }
 [a-zA-Z_][a-zA-Z0-9_]* { 
     /* variables */
-    yylval.sIndex = *yytext - 'a';
+    yylval.sIndex = strdup(yytext);
     return VARIABLE; 
 }
 

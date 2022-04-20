@@ -4,66 +4,70 @@
 
 static int lbl;
 
-int ex(nodeType *p)
+int exec(Node *p)
 {
   int lbl1, lbl2;
   if (!p)
     return 0;
   switch (p->type)
   {
-  case typeCon:
+  case CONSTANT:
     printf("\tpush\t%d\n", p->con.value);
     break;
-  case typeId:
-    printf("\tpush\t%c\n", p->id.i + 'a');
+  case IDENTIFIER:
+    printf("\tpush\t%s\n", p->id.name);
     break;
-  case typeOpr:
-    switch (p->opr.oper)
+  case OPERATION:
+    switch (p->opr.operator)
     {
     case WHILE:
       printf("L%03d:\n", lbl1 = lbl++);
-      ex(p->opr.op[0]);
+      exec(p->opr.p_operands[0]);
       printf("\tjz\tL%03d\n", lbl2 = lbl++);
-      ex(p->opr.op[1]);
+      exec(p->opr.p_operands[1]);
       printf("\tjmp\tL%03d\n", lbl1);
       printf("L%03d:\n", lbl2);
       break;
     case IF:
-      ex(p->opr.op[0]);
-      if (p->opr.nops > 2)
+      exec(p->opr.p_operands[0]);
+      if (p->opr.numberOfOperands > 2)
       {
         /* if else */
         printf("\tjz\tL%03d\n", lbl1 = lbl++);
-        ex(p->opr.op[1]);
+        exec(p->opr.p_operands[1]);
         printf("\tjmp\tL%03d\n", lbl2 = lbl++);
         printf("L%03d:\n", lbl1);
-        ex(p->opr.op[2]);
+        exec(p->opr.p_operands[2]);
         printf("L%03d:\n", lbl2);
       }
       else
       {
         /* if */
         printf("\tjz\tL%03d\n", lbl1 = lbl++);
-        ex(p->opr.op[1]);
+        exec(p->opr.p_operands[1]);
         printf("L%03d:\n", lbl1);
       }
       break;
     case PRINT:
-      ex(p->opr.op[0]);
+      exec(p->opr.p_operands[0]);
       printf("\tprint\n");
       break;
     case '=':
-      ex(p->opr.op[1]);
-      printf("\tpop\t%c\n", p->opr.op[0]->id.i + 'a');
+      exec(p->opr.p_operands[1]);
+      if (p->opr.p_operands[1]->type == OPERATION && p->opr.p_operands[1]->opr.operator== '=')
+      {
+        printf("\tpush\t%s\n", p->opr.p_operands[1]->opr.p_operands[0]->id.name);
+      }
+      printf("\tpop\t%s\n", p->opr.p_operands[0]->id.name);
       break;
     case UMINUS:
-      ex(p->opr.op[0]);
+      exec(p->opr.p_operands[0]);
       printf("\tneg\n");
       break;
     default:
-      ex(p->opr.op[0]);
-      ex(p->opr.op[1]);
-      switch (p->opr.oper)
+      exec(p->opr.p_operands[0]);
+      exec(p->opr.p_operands[1]);
+      switch (p->opr.operator)
       {
       case '+':
         printf("\tadd\n");

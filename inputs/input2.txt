@@ -1,0 +1,4 @@
+implicit_variable;
+var explicit_variable;
+var eplicit_variable2 = 4;
+const uninitialized_constant;
