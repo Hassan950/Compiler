@@ -26,6 +26,8 @@
 "if" { return IF; }
 "else" { return ELSE; }
 "print" { return PRINT; }
+"repeat" { return REPEAT; }
+"until" { return UNTIL; }
 
 "const" { return CONST; }
 "var" { return VAR; }

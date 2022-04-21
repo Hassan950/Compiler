@@ -41,6 +41,12 @@ int exec(Node *p)
       printf("\tjmp\tL%03d\n", lbl1);
       printf("L%03d:\n", lbl2);
       break;
+    case REPEAT:
+      printf("L%03d:\n", lbl1 = lbl++);
+      exec(p->opr.p_operands[0]);
+      exec(p->opr.p_operands[1]);
+      printf("\tjnz\tL%03d\n", lbl1);
+      break;
     case IF:
       exec(p->opr.p_operands[0]);
       if (p->opr.numberOfOperands > 2)

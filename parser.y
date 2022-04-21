@@ -14,6 +14,8 @@ int yylex(void);
 
 void yyerror(const char *s);
 map<string, int> sym;
+
+#define YYERROR_VERBOSE 1
 %}
 
 %union {
@@ -25,7 +27,7 @@ map<string, int> sym;
 /* declare tokens */
 %token <iValue> INTEGER
 %token <sIndex> VARIABLE
-%token WHILE FOR IF PRINT
+%token WHILE FOR IF PRINT REPEAT UNTIL
 %token CONST VAR
 %nonassoc IFX
 %nonassoc ELSE
@@ -61,6 +63,7 @@ stmt:
   | FOR '(' opt_declaration ';' single_stmt ';' assignment ')' stmt { $$ = constructOperationNode(FOR, 4, $3, $5, $7, $9); }
   | IF '(' expr ')' stmt %prec IFX { $$ = constructOperationNode(IF, 2, $3, $5); }
   | IF '(' expr ')' stmt ELSE stmt { $$ = constructOperationNode(IF, 3, $3, $5, $7); }
+  | REPEAT stmt_list UNTIL expr ';' { $$ = constructOperationNode(REPEAT, 2, $2, $4); }
   | '{' stmt_list '}' { $$ = $2; }
   ;
 
