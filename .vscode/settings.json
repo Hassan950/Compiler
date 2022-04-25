@@ -5,6 +5,9 @@
     "*.decomp": "plaintext",
     "enwik8": "plaintext",
     ".babelrc": "javascript",
-    "utility": "c"
+    "utility": "c",
+    "parser.tab.h": "c",
+    "system_error": "c",
+    "xtr1common": "c"
   }
 }

@@ -12,7 +12,7 @@
     return INTEGER; 
   }
 
-[-()<>=+*/;{}.] { return *yytext; }
+[-()<>=+*/;{}.:] { return *yytext; }
 
 ">=" { return GE; }
 "<=" { return LE; }
@@ -28,6 +28,10 @@
 "print" { return PRINT; }
 "repeat" { return REPEAT; }
 "until" { return UNTIL; }
+"switch" { return SWITCH; }
+"case" { return CASE; }
+"default" { return DEFAULT; }
+"break" { return BREAK; }
 
 "const" { return CONST; }
 "var" { return VAR; }

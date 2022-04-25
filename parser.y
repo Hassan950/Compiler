@@ -9,7 +9,7 @@ Node *constructOperationNode(int oper, int nops, ...);
 Node *constructIdentifierNode(char*);
 Node *constructConstantNode(int value);
 void freeNode(Node *p);
-int exec(Node *p);
+int exec(Node *p, int args = 0, ...);
 int yylex(void);
 
 void yyerror(const char *s);
@@ -27,8 +27,9 @@ map<string, int> sym;
 /* declare tokens */
 %token <iValue> INTEGER
 %token <sIndex> VARIABLE
-%token WHILE FOR IF PRINT REPEAT UNTIL
+%token WHILE FOR IF PRINT REPEAT UNTIL SWITCH CASE DEFAULT BREAK
 %token CONST VAR
+%token SWITCH_BODY
 %nonassoc IFX
 %nonassoc ELSE
 
@@ -41,7 +42,9 @@ map<string, int> sym;
 %right NOT 
 %nonassoc UMINUS
 
-%type <nPtr> stmt single_stmt expr stmt_list rhs declaration opt_declaration assignment
+%type <nPtr> stmt single_stmt expr stmt_list rhs
+%type <nPtr> declaration opt_declaration assignment
+%type <nPtr> switch_body cases default_stmt break_stmt break_default_stmt case_stmt
 
 %%
 
@@ -64,7 +67,37 @@ stmt:
   | IF '(' expr ')' stmt %prec IFX { $$ = constructOperationNode(IF, 2, $3, $5); }
   | IF '(' expr ')' stmt ELSE stmt { $$ = constructOperationNode(IF, 3, $3, $5, $7); }
   | REPEAT stmt_list UNTIL expr ';' { $$ = constructOperationNode(REPEAT, 2, $2, $4); }
+  | SWITCH '(' VARIABLE ')' '{' switch_body '}'  { $$ = constructOperationNode(SWITCH, 2, constructIdentifierNode($3), $6); }
   | '{' stmt_list '}' { $$ = $2; }
+  ;
+
+switch_body:
+  cases { $$ = constructOperationNode(SWITCH_BODY, 1, $1); }
+  | cases default_stmt { $$ = constructOperationNode(SWITCH_BODY, 2, $1, $2); }
+  ;
+
+cases:
+  CASE INTEGER ':' case_stmt break_stmt cases { $$ = constructOperationNode(CASE, 4, constructConstantNode($2), $4, $5, $6); }
+  | { $$ = constructOperationNode(';', 2, NULL, NULL); }
+  ;
+
+break_stmt: 
+  BREAK ';' { $$ = constructOperationNode(BREAK, 0); }
+  | { $$ = constructOperationNode(';', 2, NULL, NULL); }
+  ;
+
+default_stmt:
+  DEFAULT ':' case_stmt break_default_stmt { $$ = constructOperationNode(DEFAULT, 2, $3, $4); }
+  ;
+
+case_stmt: 
+  stmt_list { $$ = $1; }
+  | { $$ = constructOperationNode(';', 2, NULL, NULL); }
+  ;
+
+break_default_stmt:
+  BREAK ';' { $$ = constructOperationNode(';', 2, NULL, NULL); }
+  | { $$ = constructOperationNode(';', 2, NULL, NULL); }
   ;
 
 single_stmt:

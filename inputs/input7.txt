@@ -1,0 +1,23 @@
+switch (x) {
+  case 1:
+    x = x + 1;
+    switch (y) {
+      case 1:
+        y = y + 1;
+        break;
+      case 2:
+        y = y + 2;
+      default:
+        y = y + 3;
+    }
+    break;
+  case 2:
+    x = x + 2;
+  default:
+    x = x + 3;
+    break;
+}
+
+for(var i = 0; i < 10; i = i + 1) {
+  print i;
+} 

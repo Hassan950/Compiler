@@ -1,0 +1,29 @@
+	push	x
+	push	5
+	compGT
+	jz	L000
+	push	x
+	print
+	jmp	L001
+L000:
+	push	x
+	push	5
+	compLT
+	jz	L002
+	push	x
+	print
+	jmp	L003
+L002:
+	push	x
+	push	5
+	compEQ
+	jz	L004
+	push	x
+	print
+	jmp	L005
+L004:
+	push	x
+	print
+L005:
+L003:
+L001:

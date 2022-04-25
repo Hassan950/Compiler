@@ -13,8 +13,8 @@ L001:
 	push	i
 	push	5
 	compGT
-	jnz	L001
+	jz	L001
 	push	i
 	push	10
 	compGT
-	jnz	L000
+	jz	L000

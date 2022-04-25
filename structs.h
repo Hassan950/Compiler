@@ -41,3 +41,5 @@ typedef struct NodeTag
   };
 } Node;
 extern map<string, int> sym;
+extern Node *constructConstantNode(int value);
+extern void freeNode(Node *p);

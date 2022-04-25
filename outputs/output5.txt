@@ -4,7 +4,7 @@ L000:
 	push	x
 	push	10
 	compGE
-	jnz	L001
+	jz	L001
 	push	i
 	print
 	push	x
@@ -23,7 +23,7 @@ L002:
 	push	i
 	push	10
 	compLT
-	jnz	L003
+	jz	L003
 	push	i
 	print
 	jmp	L002

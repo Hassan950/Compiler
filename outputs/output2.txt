@@ -2,4 +2,4 @@
 	push	explicit_variable
 	push	4
 	pop	eplicit_variable2
-syntax error
+syntax error, unexpected ';', expecting '='
