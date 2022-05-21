@@ -12,6 +12,20 @@
     return INTEGER; 
   }
 
+(0|[1-9][0-9]*)\.[0-9]*  {
+    char * tmp = strdup(yytext);
+    yylval.dValue = atof(tmp);
+    return FLOAT;
+  }
+
+"true" {
+  return BOOL;
+}
+
+"false" {
+  return BOOL;
+}
+
 [-()<>=+*/;{}.:] { return *yytext; }
 
 ">=" { return GE; }
@@ -32,9 +46,23 @@
 "case" { return CASE; }
 "default" { return DEFAULT; }
 "break" { return BREAK; }
+"continue" { return CONTINUE; }
 
 "const" { return CONST; }
-"var" { return VAR; }
+
+"int" {
+  return TYPE_INT;
+}
+"float" {
+  return TYPE_FLOAT;
+} 
+"char" {
+  return TYPE_CHAR;
+}
+"bool" {
+  return TYPE_BOOL;
+}
+
 [a-zA-Z_][a-zA-Z0-9_]* { 
     /* variables */
     yylval.sIndex = strdup(yytext);

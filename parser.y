@@ -1,15 +1,13 @@
 /* simplest version of calculator */
 %{
-# include <stdio.h>
-# include <stdlib.h>
 # include <stdarg.h>
 # include "structs.h"
 
 Node *constructOperationNode(int oper, int nops, ...);
-Node *constructIdentifierNode(char*);
-Node *constructConstantNode(int value);
+Node *constructIdentifierNode(char*, int = -1, int = -1);
+Node *constructConstantNode(int, ...);
 void freeNode(Node *p);
-int exec(Node *p, int args = 0, ...);
+int exec(Node *p, int = -1, int = -1, int = 0, ...);
 int yylex(void);
 
 void yyerror(const char *s);
@@ -19,16 +17,23 @@ map<string, int> sym;
 %}
 
 %union {
-  int iValue;
-  char *sIndex;
+  int iValue;                         /* integer value */
+  float dValue;                      /* double value */
+  char cValue;                        /* char value */
+  bool bValue;                        /* boolean value */
+  char *sIndex;                        /* symbol table index */
+  char *varType;                      /* variable type */
   Node *nPtr;
 }
 
 /* declare tokens */
 %token <iValue> INTEGER
+%token <dValue> FLOAT
+%token <cValue> CHAR
+%token <bValue> BOOL
 %token <sIndex> VARIABLE
-%token WHILE FOR IF PRINT REPEAT UNTIL SWITCH CASE DEFAULT BREAK
-%token CONST VAR
+%token WHILE FOR IF PRINT REPEAT UNTIL SWITCH CASE DEFAULT BREAK CONTINUE
+%token CONST TYPE_INT TYPE_FLOAT TYPE_CHAR TYPE_BOOL
 %token SWITCH_BODY
 %nonassoc IFX
 %nonassoc ELSE
@@ -43,8 +48,9 @@ map<string, int> sym;
 %nonassoc UMINUS
 
 %type <nPtr> stmt single_stmt expr stmt_list rhs
-%type <nPtr> declaration opt_declaration assignment
-%type <nPtr> switch_body cases default_stmt break_stmt break_default_stmt case_stmt
+%type <nPtr> declaration opt_declaration assignment opt_assignment
+%type <nPtr> switch_body cases default_stmt case_stmt
+%type <iValue> type
 
 %%
 
@@ -57,18 +63,23 @@ function:
   |
   ;
 
+
+
 stmt: 
   ';' { $$ = constructOperationNode(';', 2, NULL, NULL); }
   | expr ';' { $$ = $1; }
   | PRINT expr ';' { $$ = constructOperationNode(PRINT, 1, $2); }
   | declaration ';' { $$ = $1; }
   | WHILE '(' expr ')' stmt { $$ = constructOperationNode(WHILE, 2, $3, $5); }
-  | FOR '(' opt_declaration ';' single_stmt ';' assignment ')' stmt { $$ = constructOperationNode(FOR, 4, $3, $5, $7, $9); }
+  | assignment ';' { $$ = $1; }
+  | FOR '(' opt_declaration ';' single_stmt ';' opt_assignment ')' stmt { $$ = constructOperationNode(FOR, 4, $3, $5, $7, $9); }
   | IF '(' expr ')' stmt %prec IFX { $$ = constructOperationNode(IF, 2, $3, $5); }
   | IF '(' expr ')' stmt ELSE stmt { $$ = constructOperationNode(IF, 3, $3, $5, $7); }
   | REPEAT stmt_list UNTIL expr ';' { $$ = constructOperationNode(REPEAT, 2, $2, $4); }
   | SWITCH '(' VARIABLE ')' '{' switch_body '}'  { $$ = constructOperationNode(SWITCH, 2, constructIdentifierNode($3), $6); }
   | '{' stmt_list '}' { $$ = $2; }
+  | BREAK ';' { $$ = constructOperationNode(BREAK, 1, NULL); }
+  | CONTINUE ';' { $$ = constructOperationNode(CONTINUE, 1, NULL); }
   ;
 
 switch_body:
@@ -77,26 +88,16 @@ switch_body:
   ;
 
 cases:
-  CASE INTEGER ':' case_stmt break_stmt cases { $$ = constructOperationNode(CASE, 4, constructConstantNode($2), $4, $5, $6); }
-  | { $$ = constructOperationNode(';', 2, NULL, NULL); }
-  ;
-
-break_stmt: 
-  BREAK ';' { $$ = constructOperationNode(BREAK, 0); }
+  CASE INTEGER ':' case_stmt cases { $$ = constructOperationNode(CASE, 3, constructConstantNode(INTEGER, $2), $4, $5); }
   | { $$ = constructOperationNode(';', 2, NULL, NULL); }
   ;
 
 default_stmt:
-  DEFAULT ':' case_stmt break_default_stmt { $$ = constructOperationNode(DEFAULT, 2, $3, $4); }
+  DEFAULT ':' case_stmt { $$ = constructOperationNode(DEFAULT, 1, $3); }
   ;
 
 case_stmt: 
   stmt_list { $$ = $1; }
-  | { $$ = constructOperationNode(';', 2, NULL, NULL); }
-  ;
-
-break_default_stmt:
-  BREAK ';' { $$ = constructOperationNode(';', 2, NULL, NULL); }
   | { $$ = constructOperationNode(';', 2, NULL, NULL); }
   ;
 
@@ -107,15 +108,26 @@ single_stmt:
   | expr { $$ = $1; }
   ;
 
-assignment: { $$ = constructOperationNode(';', 2, NULL, NULL); }
-  | VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($1), $3); }
+assignment: 
+  VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($1), $3); }
+  ;
+
+opt_assignment:
+  { $$ = constructOperationNode(';', 2, NULL, NULL); }
+  | assignment { $$ = $1; }
   ;
 
 declaration:
-  VAR VARIABLE { $$ = constructIdentifierNode($2); }
-  | VAR VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($2), $4); }
-  | VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($1), $3); }
-  | CONST VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($2), $4); }
+  type VARIABLE { $$ = constructIdentifierNode($2, 1, $1); }
+  | type VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($2, $1), $4); }
+  | CONST type VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($3, $2, CONST), $5); }
+  ;
+
+type: 
+  TYPE_INT { $$ = TYPE_INT } 
+  | TYPE_FLOAT { $$ = TYPE_FLOAT }
+  | TYPE_CHAR { $$ = TYPE_CHAR }
+  | TYPE_BOOL { $$ = TYPE_BOOL }
   ;
 
 opt_declaration:
@@ -135,8 +147,11 @@ stmt_list:
   ;
 
 expr:
-  INTEGER { $$ = constructConstantNode($1); }
+  INTEGER { $$ = constructConstantNode(INTEGER, $1); }
+  | FLOAT { $$ = constructConstantNode(FLOAT, $1); }
+  | CHAR { $$ = constructConstantNode(CHAR, $1); }
   | VARIABLE { $$ = constructIdentifierNode($1); }
+  | BOOL { $$ = constructConstantNode(BOOL, $1); }
   | '-' expr %prec UMINUS { $$ = constructOperationNode(UMINUS, 1, $2); }
   | NOT expr { $$ = constructOperationNode(NOT, 1, $2); }
   | expr '+' expr { $$ = constructOperationNode('+', 2, $1, $3); }
@@ -153,9 +168,9 @@ expr:
   | expr OR expr { $$ = constructOperationNode(OR, 2, $1, $3); }
   | '(' expr ')' { $$ = $2; }
 %%
-#define SIZEOF_NODETYPE ((char *)&p->con - (char *)p)
 
-Node *constructConstantNode(int value) {
+Node *constructConstantNode(int type, ...) {
+  va_list ap;
   Node *p;
   size_t nodeSize;
 
@@ -166,11 +181,15 @@ Node *constructConstantNode(int value) {
 
   /* copy information */
   p->type = CONSTANT;
-  p->con.value = value;
+  p->con.dataType = type;
+  va_start(ap, type);
+  p->con.value = va_arg(ap, valType);
+  va_end(ap);
+
   return p;
 }
 
-Node *constructIdentifierNode(char* i) {
+Node *constructIdentifierNode(char* i, int dataType, int qualifier) {
   Node *p;
   size_t nodeSize;
   /* allocate Node */
@@ -181,6 +200,8 @@ Node *constructIdentifierNode(char* i) {
   /* copy information */
   p->type = IDENTIFIER;
   p->id.name = strdup(i);
+  p->id.dataType = dataType;
+  p->id.qualifier = qualifier;
   return p;
 }
 

@@ -8,6 +8,7 @@
     "utility": "c",
     "parser.tab.h": "c",
     "system_error": "c",
-    "xtr1common": "c"
+    "xtr1common": "c",
+    "vector": "c"
   }
 }

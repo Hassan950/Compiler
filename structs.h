@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <string>
 #include <map>
@@ -5,21 +7,39 @@
 using std::map;
 using std::string;
 
+#define SIZEOF_NODETYPE ((char *)&p->con - (char *)p)
+
+struct valType
+{
+  union
+  {
+    int valInt;
+    double valFloat;
+    bool valBool;
+    char valChar;
+  };
+};
+
 typedef enum
 {
   CONSTANT,
   IDENTIFIER,
   OPERATION
 } NodeTypes;
+
 /* constants */
 typedef struct
 {
-  int value; /* value of constant */
+  valType value; /* value of constant */
+  int dataType;  /* type of constant */
+
 } ConstantNode;
 /* identifiers */
 typedef struct
 {
   char *name;
+  int dataType;
+  int qualifier;
 } IdentifierNode;
 /* operators */
 typedef struct
@@ -43,3 +63,4 @@ typedef struct NodeTag
 extern map<string, int> sym;
 extern Node *constructConstantNode(int value);
 extern void freeNode(Node *p);
+extern void yyerror(const char *s);

@@ -11,10 +11,10 @@ OUTPUT_FILE ?= outputs/output$(N).txt
 
 all: scan parse build
 
-parse: $(INPUT_PARSER) lib/bison.exe
+parse: $(INPUT_PARSER)
 	bison -d $(INPUT_PARSER) -b build/$(PARSER_OUTPUT)
 
-scan: $(INPUT_LEXER) lib/flex.exe 
+scan: $(INPUT_LEXER)
 	flex -obuild/$(SCANNER_OUTPUT).yy.c $(INPUT_LEXER)
 
 build: build/$(SCANNER_OUTPUT).yy.c build/$(PARSER_OUTPUT).tab.c  lib/libfl.a lib/liby.a

@@ -1,0 +1,61 @@
+int x = 0;
+while (x < 3) {
+  print x;
+  x = x + 1;
+}
+
+x = y = 10 * 50 + 30;
+x = (y = 10 * 50 + 30);
+x = not 1 and 0 or 1;
+
+for(int x = 3;x >= 10; x = x - 1) {
+  print i;
+  if(continueFlag) continue;
+  y = x + 2;
+  break;
+}
+
+for(; i < 10;) {
+  print i;
+}
+
+float i = 0;
+repeat
+  i = i + 1;
+  repeat
+    i = i + 2;
+  until i > 5;
+until (i > 10);
+
+switch (x) {
+  case 1:
+    x = x + 1;
+    switch (y) {
+      case 1:
+        y = y + 1;
+        if(z > 10) break;
+      case 2:
+        y = y + 2;
+      default:
+        y = y + 3;
+    }
+    break;
+  case 2:
+    x = x + 2;
+  default:
+    x = x + 3;
+    break;
+}
+
+if (x > 5) {
+  print x;
+  break;
+} else if (x < 5) {
+  print x;
+} else if (x == 5) {
+  print x;
+} else {
+  print x;
+}
+
+break;
