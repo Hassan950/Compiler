@@ -4,8 +4,10 @@
 #include <string>
 #include <map>
 #include <iostream>
+#include <vector>
 using std::map;
 using std::string;
+using std::vector;
 
 #define SIZEOF_NODETYPE ((char *)&p->con - (char *)p)
 
@@ -37,7 +39,7 @@ typedef struct
 /* identifiers */
 typedef struct
 {
-  char *name;
+  char* name;
   int dataType;
   int qualifier;
 } IdentifierNode;
@@ -46,7 +48,7 @@ typedef struct
 {
   int symbol;
   int numberOfOperands;
-  struct NodeTag *p_operands[1]; /* expandable */
+  struct NodeTag* p_operands[1]; /* expandable */
 } OperationNode;
 typedef struct NodeTag
 {
@@ -60,7 +62,26 @@ typedef struct NodeTag
     OperationNode opr; /* operators */
   };
 } Node;
-extern map<string, int> sym;
-extern Node *constructConstantNode(int value);
-extern void freeNode(Node *p);
-extern void yyerror(const char *s);
+
+struct SymbolEntry
+{
+  std::string name;
+  int type;               // int, float, ..
+  int symbolType; // variable, constant
+  int scope;
+  int timestamp;
+  bool used;
+  bool isInitialized;
+  SymbolEntry(std::string nm, int ty, int sty, int sc, int ts, bool init)
+  {
+    name = nm, type = ty, symbolType = sty, scope = sc, timestamp = ts;
+    used = false;
+    isInitialized = init;
+  }
+};
+
+static vector<map<string, SymbolEntry*> > sym(1, map<string, SymbolEntry*>());
+extern Node* constructConstantNode(int value);
+extern void freeNode(Node* p);
+extern void yyerror(const char* s);
+extern void getUnusedVariables();

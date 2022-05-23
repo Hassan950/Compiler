@@ -4,6 +4,8 @@
 %}
 
 
+%option yylineno
+
 %%
 
 [0-9]+ { 
@@ -56,9 +58,6 @@
 "float" {
   return TYPE_FLOAT;
 } 
-"char" {
-  return TYPE_CHAR;
-}
 "bool" {
   return TYPE_BOOL;
 }
@@ -66,7 +65,6 @@
 [a-zA-Z_][a-zA-Z0-9_]* { 
     /* variables */
     yylval.sIndex = strdup(yytext);
-    sym[yylval.sIndex] = 0;
     return VARIABLE; 
 }
 
@@ -76,4 +74,9 @@
 
 int yywrap(void) {
   return 1;
+}
+
+void yyerror(const char *s) {
+  fprintf(stderr, "Line %d: %s\n", yylineno, s);
+  exit(0);
 }

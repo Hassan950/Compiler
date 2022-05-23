@@ -1,0 +1,9 @@
+Time Step,Name,Data Type,Qualifier,Scope
+0,x,int,Variable,0
+1,a,int,Constant,0
+2,y,float,Variable,0
+3,b,float,Variable,0
+4,ab,bool,Variable,0
+5,z,bool,Constant,0
+6,c,bool,Variable,0
+7,c,bool,Variable,1

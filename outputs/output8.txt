@@ -1,29 +1,19 @@
-	push	x
-	push	5
-	compGT
-	jz	L000
-	push	x
-	print
-	jmp	L001
+	push int	x
+	push int	5
+	pop int	x
+	push int	0
+	pop int	i
 L000:
-	push	x
-	push	5
+	push	i
+	push int	5
 	compLT
-	jz	L002
-	push	x
+	jz	L001
+	push	i
 	print
-	jmp	L003
 L002:
-	push	x
-	push	5
-	compEQ
-	jz	L004
-	push	x
-	print
-	jmp	L005
-L004:
-	push	x
-	print
-L005:
-L003:
+	push	i
+	push int	1
+	add
+	pop int	i
+	jmp	L000
 L001:

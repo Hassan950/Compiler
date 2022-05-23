@@ -1,184 +1,46 @@
-	push	0
-	pop	x
+	push int	0
+	pop int	x
+	push float	10.500000
+	pop float	p
+	push int	10
+	pop int	y
 L000:
 	push	x
-	push	3
+	push int	3
 	compLT
 	jz	L000
 	push	x
 	print
 	push	x
-	push	1
+	push int	1
 	add
-	pop	x
+	pop 	x
 	jmp	L000
 L000:
-	push	10
-	push	50
+	push int	10
+	push int	50
 	mul
-	push	30
+	push int	30
 	add
-	pop	y
+	pop 	y
 	push	y
-	pop	x
-	push	10
-	push	50
+	pop 	x
+	push int	10
+	push int	50
 	mul
-	push	30
+	push int	30
 	add
-	pop	y
+	pop 	y
 	push	y
-	pop	x
-	push	1
+	pop 	x
+	push int	1
 	not
-	push	0
+	push int	0
 	and
-	push	1
+	push int	1
 	or
-	pop	x
-	push	3
-	pop	x
-L001:
+	pop 	x
 	push	x
-	push	10
-	compGE
-	jz	L002
-	push	i
-	print
-	push	continueFlag
-	jz	L004
-	jmp	L003
-L004:
-	push	x
-	push	2
-	add
-	pop	y
-	jmp	L002
-L003:
-	push	x
-	push	1
-	sub
-	pop	x
-	jmp	L001
-L002:
-L005:
-	push	i
-	push	10
-	compLT
-	jz	L006
-	push	i
-	print
-L007:
-	jmp	L005
-L006:
-	push	0
-	pop	i
-L008:
-	push	i
-	push	1
-	add
-	pop	i
-L010:
-	push	i
-	push	2
-	add
-	pop	i
-	push	i
-	push	5
-	compGT
-	jz	L010
-L011:
-	push	i
-	push	10
-	compGT
-	jz	L008
-L009:
-	push	x
-	push	1
-	compEQ
-	jz	L013
-	push	x
-	push	1
-	add
-	pop	x
 	push	y
-	push	1
-	compEQ
-	jz	L015
-	push	y
-	push	1
 	add
-	pop	y
-	push	z
-	push	10
-	compGT
-	jz	L016
-	jmp	L014
-L016:
-	jmp	L017
-L015:
-	push	y
-	push	2
-	compEQ
-	jz	L018
-L017:
-	push	y
-	push	2
-	add
-	pop	y
-L018:
-	push	y
-	push	3
-	add
-	pop	y
-L014:
-	jmp	L012
-	jmp	L019
-L013:
-	push	x
-	push	2
-	compEQ
-	jz	L020
-L019:
-	push	x
-	push	2
-	add
-	pop	x
-L020:
-	push	x
-	push	3
-	add
-	pop	x
-	jmp	L012
-L012:
-	push	x
-	push	5
-	compGT
-	jz	L021
-	push	x
-	print
-break outside of loop or switch
-	jmp	L022
-L021:
-	push	x
-	push	5
-	compLT
-	jz	L023
-	push	x
-	print
-	jmp	L024
-L023:
-	push	x
-	push	5
-	compEQ
-	jz	L025
-	push	x
-	print
-	jmp	L026
-L025:
-	push	x
-	print
-L026:
-L024:
-L022:
-break outside of loop or switch
+Error: Cannot assign value to constant Identifier 'p'

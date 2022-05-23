@@ -9,6 +9,17 @@
     "parser.tab.h": "c",
     "system_error": "c",
     "xtr1common": "c",
-    "vector": "c"
+    "vector": "c",
+    "map": "c",
+    "string": "c",
+    "xstring": "c",
+    "iosfwd": "c",
+    "xtree": "c",
+    "xutility": "c",
+    "xlocale": "c",
+    "initializer_list": "c",
+    "xlocnum": "c",
+    "type_traits": "c",
+    "sstream": "cpp"
   }
 }

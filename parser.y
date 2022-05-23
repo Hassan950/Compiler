@@ -3,17 +3,18 @@
 # include <stdarg.h>
 # include "structs.h"
 
+extern void exportSymbolTable();
 Node *constructOperationNode(int oper, int nops, ...);
 Node *constructIdentifierNode(char*, int = -1, int = -1);
-Node *constructConstantNode(int, ...);
+Node *constructConstantNode(int, int, ...);
 void freeNode(Node *p);
 int exec(Node *p, int = -1, int = -1, int = 0, ...);
 int yylex(void);
 
 void yyerror(const char *s);
-map<string, int> sym;
 
 #define YYERROR_VERBOSE 1
+
 %}
 
 %union {
@@ -33,7 +34,7 @@ map<string, int> sym;
 %token <bValue> BOOL
 %token <sIndex> VARIABLE
 %token WHILE FOR IF PRINT REPEAT UNTIL SWITCH CASE DEFAULT BREAK CONTINUE
-%token CONST TYPE_INT TYPE_FLOAT TYPE_CHAR TYPE_BOOL
+%token CONST TYPE_INT TYPE_FLOAT TYPE_BOOL DECLARE
 %token SWITCH_BODY
 %nonassoc IFX
 %nonassoc ELSE
@@ -55,7 +56,9 @@ map<string, int> sym;
 %%
 
 program: 
-  function { exit(0); }
+  function { 
+      getUnusedVariables();
+    }
   ;
 
 function:
@@ -88,7 +91,8 @@ switch_body:
   ;
 
 cases:
-  CASE INTEGER ':' case_stmt cases { $$ = constructOperationNode(CASE, 3, constructConstantNode(INTEGER, $2), $4, $5); }
+  CASE INTEGER ':' case_stmt cases { $$ = constructOperationNode(CASE, 3, constructConstantNode(INTEGER, TYPE_INT, $2), $4, $5); }
+  | CASE BOOL ':' case_stmt cases { $$ = constructOperationNode(CASE, 3, constructConstantNode(BOOL, TYPE_BOOL, $2), $4, $5); }
   | { $$ = constructOperationNode(';', 2, NULL, NULL); }
   ;
 
@@ -118,7 +122,7 @@ opt_assignment:
   ;
 
 declaration:
-  type VARIABLE { $$ = constructIdentifierNode($2, 1, $1); }
+  type VARIABLE { $$ = constructOperationNode(DECLARE, 1, constructIdentifierNode($2, $1)); }
   | type VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($2, $1), $4); }
   | CONST type VARIABLE '=' rhs { $$ = constructOperationNode('=', 2, constructIdentifierNode($3, $2, CONST), $5); }
   ;
@@ -126,7 +130,6 @@ declaration:
 type: 
   TYPE_INT { $$ = TYPE_INT } 
   | TYPE_FLOAT { $$ = TYPE_FLOAT }
-  | TYPE_CHAR { $$ = TYPE_CHAR }
   | TYPE_BOOL { $$ = TYPE_BOOL }
   ;
 
@@ -147,11 +150,10 @@ stmt_list:
   ;
 
 expr:
-  INTEGER { $$ = constructConstantNode(INTEGER, $1); }
-  | FLOAT { $$ = constructConstantNode(FLOAT, $1); }
-  | CHAR { $$ = constructConstantNode(CHAR, $1); }
+  INTEGER { $$ = constructConstantNode(INTEGER, TYPE_INT, $1); }
+  | FLOAT { $$ = constructConstantNode(FLOAT, TYPE_FLOAT, $1); }
   | VARIABLE { $$ = constructIdentifierNode($1); }
-  | BOOL { $$ = constructConstantNode(BOOL, $1); }
+  | BOOL { $$ = constructConstantNode(BOOL, TYPE_BOOL, $1); }
   | '-' expr %prec UMINUS { $$ = constructOperationNode(UMINUS, 1, $2); }
   | NOT expr { $$ = constructOperationNode(NOT, 1, $2); }
   | expr '+' expr { $$ = constructOperationNode('+', 2, $1, $3); }
@@ -169,7 +171,7 @@ expr:
   | '(' expr ')' { $$ = $2; }
 %%
 
-Node *constructConstantNode(int type, ...) {
+Node *constructConstantNode(int type, int dataType, ...) {
   va_list ap;
   Node *p;
   size_t nodeSize;
@@ -181,8 +183,8 @@ Node *constructConstantNode(int type, ...) {
 
   /* copy information */
   p->type = CONSTANT;
-  p->con.dataType = type;
-  va_start(ap, type);
+  p->con.dataType = dataType;
+  va_start(ap, dataType);
   p->con.value = va_arg(ap, valType);
   va_end(ap);
 
@@ -239,10 +241,8 @@ void freeNode(Node *p) {
   free (p);
 }
 
-void yyerror(const char *s) {
-  fprintf(stdout, "%s\n", s);
-}
 int main(void) {
   yyparse();
+  exportSymbolTable();
   return 0;
 }
