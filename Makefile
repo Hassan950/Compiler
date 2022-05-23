@@ -19,6 +19,8 @@ scan: $(INPUT_LEXER)
 
 build: build/$(SCANNER_OUTPUT).yy.c build/$(PARSER_OUTPUT).tab.c  lib/libfl.a lib/liby.a
 	g++ compiler.c build/$(PARSER_OUTPUT).tab.c build/$(SCANNER_OUTPUT).yy.c -I. -Llib -lfl -o build/$(EXE_OUTPUT).exe
+	cp -R build gui/dist/win-unpacked/resources
+	cp -R outputs gui/dist/win-unpacked/resources
 
 clear:
 	rm build/*
