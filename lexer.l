@@ -32,7 +32,7 @@
 
 ">=" { return GE; }
 "<=" { return LE; }
-"==" { return EQ; }
+"==" { return EQ; } 
 "!=" { return NE; }
 "and" { return AND; }
 "or" { return OR; }
@@ -68,8 +68,16 @@
     return VARIABLE; 
 }
 
+
 [ \t\n]+  { /* ignore whitespace */ }
+
+"//".*/\n { printf("%s\n", yytext); }
+"//".* { printf("%s\n", yytext); }
+
+
 .      { printf("Mystery character %c\n", *yytext); }
+
+
 %%
 
 int yywrap(void) {

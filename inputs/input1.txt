@@ -1,5 +1,14 @@
-x = 0;
-while (x < 3) {
-  print x;
-  x = x + 1;
-}
+// unused variable(s)
+
+int unused_variable_1 = 1;
+float unused_variable_2 = 1.;
+
+// unused variable(s) inside block
+
+int unused_variable_1 = 1;
+float unused_variable_2 = 1.;
+
+{
+    int unused_variable_3 = 1;
+    float unused_variable_4 = 1.;
+} // will detect unused variable(s) in this block before reaching the end of the program

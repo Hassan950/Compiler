@@ -34,7 +34,7 @@ void yyerror(const char *s);
 %token <bValue> BOOL
 %token <sIndex> VARIABLE
 %token WHILE FOR IF PRINT REPEAT UNTIL SWITCH CASE DEFAULT BREAK CONTINUE
-%token CONST TYPE_INT TYPE_FLOAT TYPE_BOOL DECLARE
+%token CONST TYPE_INT TYPE_FLOAT TYPE_BOOL DECLARE BLOCK
 %token SWITCH_BODY
 %nonassoc IFX
 %nonassoc ELSE
@@ -80,7 +80,7 @@ stmt:
   | IF '(' expr ')' stmt ELSE stmt { $$ = constructOperationNode(IF, 3, $3, $5, $7); }
   | REPEAT stmt_list UNTIL expr ';' { $$ = constructOperationNode(REPEAT, 2, $2, $4); }
   | SWITCH '(' VARIABLE ')' '{' switch_body '}'  { $$ = constructOperationNode(SWITCH, 2, constructIdentifierNode($3), $6); }
-  | '{' stmt_list '}' { $$ = $2; }
+  | '{' stmt_list '}' { $$ = constructOperationNode(BLOCK, 1, $2);; }
   | BREAK ';' { $$ = constructOperationNode(BREAK, 1, NULL); }
   | CONTINUE ';' { $$ = constructOperationNode(CONTINUE, 1, NULL); }
   ;

@@ -1,2 +1,13 @@
-x = y = 10 * 50 + 30;
-x = (y = 10 * 50 + 30);
+// type mismatch
+
+int m = 3;
+float c = 300000000.;
+
+float E = m * c * c; //mismatch int & float
+
+
+// not mismatch
+float c = 300000000.;
+bool b = true;
+bool a = not c and b;
+print a; // avoiding unused variable error

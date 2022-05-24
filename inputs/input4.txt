@@ -1,1 +1,38 @@
-x = not 1 and 0 or 1;
+// switch case mismatch
+int x = 5;
+switch (x) {
+  case true:
+    break;
+  case 2:
+    break;
+}
+
+//switch value must be bool or int only
+float x = 5.;
+switch(x) {
+  case 1:
+    break;
+  case 2:
+    break;
+}
+
+// break outside of loop
+int x = 5;
+if(x >= 5) {
+  break;
+}
+
+// continue outside of loop
+int x = 5;
+if(x >= 5) {
+  continue;
+}
+
+// any operation type mismatch
+int x = 5;
+int y = 5.0;
+int z = x + y;
+
+// assignment type mismatch
+int x = 5;
+float y = x;

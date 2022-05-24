@@ -1,9 +1,0 @@
-	push	x
-	push	1
-	pop	x
-	push	x
-	push	22.000000
-	pop	x
-	push	x
-	push	true
-	pop	x

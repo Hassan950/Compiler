@@ -1,64 +1,129 @@
-int x = 0;
-const float p = 10.5;
-int y = 10;
-while (x < 3) {
-  print x;
-  x = x + 1;
+// Variables & Declarations
+
+int a = 1;
+const int b = 2;
+
+float af = 1.;
+const float bf = 2.;
+
+bool ab = true;
+const bool bb = false;
+
+
+
+// Mathematical and logical expressions
+
+bool c1 = a >= b;
+bool c2 = a <= b;
+bool c3 = a == b;
+bool c4 = a != b;
+bool c5 = a and b;
+bool c6 = a or b;
+bool c7 = not a;
+
+bool c_compound = a >= b and (not (b <= a)) or (a != b);
+
+
+// Assignments
+c1 = ab;
+c2 = c1 = ab = bb; // compound assignment
+
+// if-else
+
+if(c1 == c2) {
+  print a;
+} else {
+  print b;
 }
 
-x = y = 10 * 50 + 30;
-x = (y = 10 * 50 + 30);
-x = not 1 and 0 or 1;
-p = x + y;
+if(c1 == c2) {
+  print a;
+  if(c4 == c5) {
+    print b;
+  }
+} else if(c2 == c3) {
+  print b;
+} else {
+  print a;
+}
 
-for(int x = 3;x >= 10; x = x - 1) {
+// while loops, break statement, continue
+
+while(a > 0) {
+  print a;
+  a = a - 1;
+  if(a == 1) break;
+  else continue;
+}
+
+// repeat-until loops, break statement, continue
+
+repeat {
+  print a;
+  a = a - 1;
+  if(a == 1) break;
+  else continue;
+} until(a > 0);
+
+// for loops, break statement, continue
+for(int i = 0; i < 10; i = i + 1) {
   print i;
-  if(continueFlag) continue;
-  y = x + 2;
-  break;
+  if(i == 5) break;
+  else continue;
 }
 
-for(; i < 10;) {
-  print i;
-}
+// switch cases
 
-float i = 0;
-repeat
-  i = i + 1;
-  repeat
-    i = i + 2;
-  until i > 5;
-until (i > 10);
-
-switch (x) {
+// normal switch case (with default)
+switch (a) {
   case 1:
-    x = x + 1;
-    switch (y) {
-      case 1:
-        y = y + 1;
-        if(z > 10) break;
-      case 2:
-        y = y + 2;
-      default:
-        y = y + 3;
-    }
+    print a;
     break;
   case 2:
-    x = x + 2;
+    print b;
+    break;
   default:
-    x = x + 3;
+    print c1;
     break;
 }
 
-if (x > 5) {
-  print x;
-  break;
-} else if (x < 5) {
-  print x;
-} else if (x == 5) {
-  print x;
-} else {
-  print x;
+// switch case with no default
+switch (a) {
+  case 1:
+    print a;
+    break;
+  case 2:
+    print b;
+    break;
 }
 
-break;
+// advanced switch case
+switch (a) {
+  case 1:
+  case 5:
+    print a;
+  case 2:
+    print b;
+    break;
+  default:
+    print c1;
+    break;
+}
+
+
+// block structure
+{
+  int a = 1; // can declare variables in a block with same name
+  print a;
+}
+
+// avoiding unused variables error
+print af;
+print bf;
+print c3;
+print c4;
+print c5;
+print c6;
+print c7;
+print c_compound;
+

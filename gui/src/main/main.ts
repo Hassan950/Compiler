@@ -14,7 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { readFileSync } from 'fs';
+import { fstat, readFileSync, unlink, unlinkSync, writeFileSync } from 'fs';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
@@ -130,14 +130,16 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
-    ipcMain.handle('compile', async (event, text) => {
+    ipcMain.handle('compile', async (event, text: string) => {
       const p = app.getAppPath();
+      writeFileSync(`${p}\\temp.txt`, JSON.parse(text));
       const { stdout, stderr } = await promisify(exec)(
-        `printf ${text} | ${p}\\..\\build\\output.exe`,
+        `${p}\\..\\build\\output.exe < ${p}\\temp.txt`,
         {
           cwd: `${p}\\..`,
         }
       );
+      unlinkSync(`${p}\\temp.txt`);
       const symbolTable = readFileSync(
         `${p}\\..\\outputs\\symbolTable.txt`,
         'utf8'

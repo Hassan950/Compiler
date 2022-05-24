@@ -15,11 +15,9 @@ void getUnusedVariables() {
   std::map<std::string, SymbolEntry*>::iterator it;
   std::string str = "";
 
-  for (int i = 0; i < sym.size(); i++) {
-    for (it = sym[i].begin(); it != sym[i].end(); it++) {
-      if (it->second->used == false) {
-        str += it->second->name + " ";
-      }
+  for (it = sym[lvl].begin(); it != sym[lvl].end(); it++) {
+    if (it->second->used == false) {
+      str += it->second->name + " ";
     }
   }
 
@@ -292,6 +290,12 @@ int exec(Node* p, int continueLabel = -1, int breakLabel = -1, int args = 0, ...
     case DEFAULT:
       addBlockLevel();
       exec(p->opr.p_operands[0], continueLabel, breakLabel);
+      removeBlockLevel();
+      break;
+    case BLOCK:
+      addBlockLevel();
+      for (int i = 0; i < p->opr.numberOfOperands; i++)
+        exec(p->opr.p_operands[i], continueLabel, breakLabel);
       removeBlockLevel();
       break;
     case ';':

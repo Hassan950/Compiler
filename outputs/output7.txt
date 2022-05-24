@@ -1,67 +1,7 @@
-	push	x
-	push	1
-	compEQ
-	jz	L001
-	push	x
-	push	1
-	add
-	pop	x
-	push	y
-	push	1
-	compEQ
-	jz	L003
-	push	y
-	push	1
-	add
-	pop	y
-	jmp	L002
-	jmp	L004
-L003:
-	push	y
-	push	2
-	compEQ
-	jz	L005
-L004:
-	push	y
-	push	2
-	add
-	pop	y
-L005:
-	push	y
-	push	3
-	add
-	pop	y
-L002:
-	jmp	L000
-	jmp	L006
-L001:
-	push	x
-	push	2
-	compEQ
-	jz	L007
-L006:
-	push	x
-	push	2
-	add
-	pop	x
-L007:
-	push	x
-	push	3
-	add
-	pop	x
-L000:
-	push	0
-	pop	i
-L008:
-	push	i
-	push	10
-	compLT
-	jz	L009
-	push	i
-	print
-	push	i
-	push	1
-	add
-	pop	i
-	jmp	L008
-L009:
+// type mismatch
+	push int	3
+	pop int	m
+	push float	300000000.000000
+	pop float	c
+	push	m
+	push	c

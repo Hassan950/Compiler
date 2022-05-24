@@ -1,4 +1,19 @@
-implicit_variable;
-var explicit_variable;
-var eplicit_variable2 = 4;
-const uninitialized_constant;
+// constant assignment
+const float PI = 3.14;
+PI = 2.71; // Pi = e
+
+// using uninitialized variable
+float c; // speed of light
+float m = 3.;
+float E = m * c * c;
+
+// using undefined variable
+float m = 3.;
+float E = m * c * c;
+
+// declare variable twice
+float c;
+float m = 3.;
+int c; // again but with different type
+float E = m * c * c;
+

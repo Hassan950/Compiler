@@ -1,46 +1,255 @@
-	push int	0
-	pop int	x
-	push float	10.500000
-	pop float	p
-	push int	10
-	pop int	y
-L000:
-	push	x
-	push int	3
-	compLT
-	jz	L000
-	push	x
-	print
-	push	x
 	push int	1
-	add
-	pop 	x
-	jmp	L000
-L000:
-	push int	10
-	push int	50
-	mul
-	push int	30
-	add
-	pop 	y
-	push	y
-	pop 	x
-	push int	10
-	push int	50
-	mul
-	push int	30
-	add
-	pop 	y
-	push	y
-	pop 	x
-	push int	1
-	not
-	push int	0
+	pop int	a
+	push int	2
+	pop int	b
+	push float	1.000000
+	pop float	af
+	push float	2.000000
+	pop float	bf
+	push bool	true
+	pop bool	ab
+	push bool	true
+	pop bool	bb
+	push	a
+	push	b
+	compGE
+	pop bool	c1
+	push	a
+	push	b
+	compLE
+	pop bool	c2
+	push	a
+	push	b
+	compEQ
+	pop bool	c3
+	push	a
+	push	b
+	compNE
+	pop bool	c4
+	push	a
+	push	b
 	and
-	push int	1
+	pop bool	c5
+	push	a
+	push	b
 	or
-	pop 	x
-	push	x
-	push	y
+	pop bool	c6
+	push	a
+	not
+	pop bool	c7
+	push	a
+	push	b
+	compGE
+	push	b
+	push	a
+	compLE
+	not
+	and
+	push	a
+	push	b
+	compNE
+	or
+	pop bool	c_compound
+	push	ab
+	pop bool	c1
+	push	bb
+	pop bool	ab
+	push	ab
+	pop bool	c1
+	push	c1
+	pop bool	c2
+	push	c1
+	push	c2
+	compEQ
+	jz	L000
+	push	a
+	print
+	jmp	L001
+L000:
+	push	b
+	print
+L001:
+	push	c1
+	push	c2
+	compEQ
+	jz	L002
+	push	a
+	print
+	push	c4
+	push	c5
+	compEQ
+	jz	L003
+	push	b
+	print
+L003:
+	jmp	L004
+L002:
+	push	c2
+	push	c3
+	compEQ
+	jz	L005
+	push	b
+	print
+	jmp	L006
+L005:
+	push	a
+	print
+L006:
+L004:
+L007:
+	push	a
+	push int	0
+	compGT
+	jz	L001
+	push	a
+	print
+	push	a
+	push int	1
+	sub
+	pop int	a
+	push	a
+	push int	1
+	compEQ
+	jz	L008
+	jmp	L001
+	jmp	L009
+L008:
+	jmp	L007
+L009:
+	jmp	L007
+L001:
+L010:
+	push	a
+	print
+	push	a
+	push int	1
+	sub
+	pop int	a
+	push	a
+	push int	1
+	compEQ
+	jz	L012
+	jmp	L011
+	jmp	L013
+L012:
+	jmp	L010
+L013:
+	push	a
+	push int	0
+	compGT
+	jz	L010
+L011:
+	push int	0
+	pop int	i
+L014:
+	push	i
+	push int	10
+	compLT
+	jz	L015
+	push	i
+	print
+	push	i
+	push int	5
+	compEQ
+	jz	L017
+	jmp	L015
+	jmp	L018
+L017:
+	jmp	L016
+L018:
+L016:
+	push	i
+	push int	1
 	add
-Error: Cannot assign value to constant Identifier 'p'
+	pop int	i
+	jmp	L014
+L015:
+	push	a
+	push int	1
+	compEQ
+	jz	L020
+	push	a
+	print
+	jmp	L019
+	jmp	L021
+L020:
+	push	a
+	push int	2
+	compEQ
+	jz	L022
+L021:
+	push	b
+	print
+	jmp	L019
+L022:
+	push	c1
+	print
+	jmp	L019
+L019:
+	push	a
+	push int	1
+	compEQ
+	jz	L024
+	push	a
+	print
+	jmp	L023
+	jmp	L025
+L024:
+	push	a
+	push int	2
+	compEQ
+	jz	L026
+L025:
+	push	b
+	print
+	jmp	L023
+L026:
+L023:
+	push	a
+	push int	1
+	compEQ
+	jz	L028
+	jmp	L029
+L028:
+	push	a
+	push int	5
+	compEQ
+	jz	L030
+L029:
+	push	a
+	print
+	jmp	L031
+L030:
+	push	a
+	push int	2
+	compEQ
+	jz	L032
+L031:
+	push	b
+	print
+	jmp	L027
+L032:
+	push	c1
+	print
+	jmp	L027
+L027:
+	push int	1
+	pop int	a
+	push	a
+	print
+	push	af
+	print
+	push	bf
+	print
+	push	c3
+	print
+	push	c4
+	print
+	push	c5
+	print
+	push	c6
+	print
+	push	c7
+	print
+	push	c_compound
+	print
