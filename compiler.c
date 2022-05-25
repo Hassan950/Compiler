@@ -142,7 +142,10 @@ int exec(Node* p, int continueLabel = -1, int breakLabel = -1, int args = 0, ...
     case WHILE:
       addBlockLevel();
       printf("L%03d:\n", lbl1 = lbl++);
-      exec(p->opr.p_operands[0]); // expression
+      resultType = exec(p->opr.p_operands[0]); // expression
+      if (resultType != TYPE_BOOL) {
+        yyerror("Error: While condition must be of type bool");
+      }
       printf("\tjz\tL%03d\n", lbl2);
       exec(p->opr.p_operands[1], lbl1, lbl2);
       printf("\tjmp\tL%03d\n", lbl1);
@@ -154,7 +157,10 @@ int exec(Node* p, int continueLabel = -1, int breakLabel = -1, int args = 0, ...
       exec(p->opr.p_operands[0]); // declaration / initialization
       printf("L%03d:\n", lbl1 = lbl++);
 
-      exec(p->opr.p_operands[1]);            // expression (condition)
+      resultType = exec(p->opr.p_operands[1]);            // expression (condition)
+      if (resultType != TYPE_BOOL) {
+        yyerror("Error: For condition must be of type bool");
+      }
       printf("\tjz\tL%03d\n", lbl2 = lbl++); // if condition not fullfilled jump
 
       exec(p->opr.p_operands[3], lbl3 = lbl++, lbl2); // statement
@@ -169,14 +175,20 @@ int exec(Node* p, int continueLabel = -1, int breakLabel = -1, int args = 0, ...
       addBlockLevel();
       printf("L%03d:\n", lbl1 = lbl++);
       exec(p->opr.p_operands[0], lbl1, lbl2 = lbl++);
-      exec(p->opr.p_operands[1]);
+      resultType = exec(p->opr.p_operands[1]);
+      if (resultType != TYPE_BOOL) {
+        yyerror("Error: Repeat condition must be of type bool");
+      }
       printf("\tjz\tL%03d\n", lbl1); // if condition not fullfilled repeat
       printf("L%03d:\n", lbl2);
       removeBlockLevel();
       break;
     case IF:
       addBlockLevel();
-      exec(p->opr.p_operands[0]);
+      resultType = exec(p->opr.p_operands[0]);
+      if (resultType != TYPE_BOOL) {
+        yyerror("Error: If condition must be of type bool");
+      }
       if (p->opr.numberOfOperands > 2)
       {
         /* if else */
@@ -221,7 +233,7 @@ int exec(Node* p, int continueLabel = -1, int breakLabel = -1, int args = 0, ...
       return symbolEntry->type;
     case DECLARE:
       declareIdentifier(p->opr.p_operands[0], true);
-      printf("\tpush %s\t%s\n", getDataType(p->opr.p_operands[0]->id.dataType), p->opr.p_operands[0]->id.name);
+      printf("\tpop %s\t%s\n", getDataType(p->opr.p_operands[0]->id.dataType), p->opr.p_operands[0]->id.name);
       break;
     case UMINUS:
       resultType = exec(p->opr.p_operands[0]);

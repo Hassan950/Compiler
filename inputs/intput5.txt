@@ -1,0 +1,27 @@
+// conditions must be booleans
+int x = 5;
+if(x) {
+  print x;
+}
+
+float y = .1;
+if(y) {
+  print y;
+}
+
+int z = 5;
+repeat {
+  print z;
+} until(z);
+
+int w = 5;
+while(w) {
+  print w;
+}
+
+// small trick
+int a = 5;
+if(not not a) {
+  print a;
+}
+
