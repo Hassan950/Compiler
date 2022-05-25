@@ -19,7 +19,9 @@ class Editor extends React.Component {
         status: '0',
         message: '',
         symbolTable: '',
+        line: '',
       },
+      showAnnotations: false,
     };
 
     this.handleRun = this.handleRun.bind(this);
@@ -29,7 +31,7 @@ class Editor extends React.Component {
   handleCodeChange(code) {
     const { task } = this.state;
     task.code = code;
-    return this.setState({ task });
+    return this.setState({ task, showAnnotations: false });
   }
 
   async handleRun(event) {
@@ -43,7 +45,9 @@ class Editor extends React.Component {
           status: '1',
           message: stderr,
           symbolTable: '',
+          line: stderr.match(/Line (\d+):/)[1],
         },
+        showAnnotations: true,
       });
     } else {
       this.setState({
@@ -51,6 +55,7 @@ class Editor extends React.Component {
           status: '0',
           message: stdout,
           symbolTable,
+          line: '',
         },
       });
     }
@@ -66,6 +71,8 @@ class Editor extends React.Component {
                 <CodeEditor
                   onChange={this.handleCodeChange}
                   code={this.state.task.code}
+                  response={this.state.response}
+                  showAnnotations={this.state.showAnnotations}
                 />
               </Col>
               <Col sm={6}>
@@ -94,13 +101,14 @@ class Editor extends React.Component {
                 show={this.state.response.status !== '0'}
                 message={this.state.response.message}
               />
-              {this.state.response.status === '0' && (
-                <CsvToHtmlTable
-                  data={this.state.response.symbolTable}
-                  csvDelimiter=","
-                  tableClassName="table table-striped table-hover"
-                />
-              )}
+              {this.state.response.status === '0' &&
+                !!this.state.response.message.length && (
+                  <CsvToHtmlTable
+                    data={this.state.response.symbolTable}
+                    csvDelimiter=","
+                    tableClassName="table table-striped table-hover"
+                  />
+                )}
             </Col>
           </FormGroup>
         </Form>

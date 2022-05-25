@@ -71,11 +71,18 @@
 
 [ \t\n]+  { /* ignore whitespace */ }
 
-"//".*/\n { printf("%s\n", yytext); }
+"//".*/\n { 
+    printf("%s\n", yytext);
+    yylineno--;
+  }
 "//".* { printf("%s\n", yytext); }
 
 
-.      { printf("Mystery character %c\n", *yytext); }
+.      { 
+    char msg[1024];
+    sprintf(msg, "Unknown character: %s", yytext);
+    yyerror(msg);
+  }
 
 
 %%

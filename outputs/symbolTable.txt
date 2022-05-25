@@ -1,17 +1,2 @@
 Time Step,Name,Data Type,Qualifier,Scope
 0,a,int,Variable,0
-1,b,int,Constant,0
-2,af,float,Variable,0
-3,bf,float,Constant,0
-4,ab,bool,Variable,0
-5,bb,bool,Constant,0
-6,c1,bool,Variable,0
-7,c2,bool,Variable,0
-8,c3,bool,Variable,0
-9,c4,bool,Variable,0
-10,c5,bool,Variable,0
-11,c6,bool,Variable,0
-12,c7,bool,Variable,0
-13,c_compound,bool,Variable,0
-14,i,int,Variable,1
-15,a,int,Variable,1

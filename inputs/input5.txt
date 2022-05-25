@@ -4,7 +4,7 @@ if(x) {
   print x;
 }
 
-float y = .1;
+float y = 0.1;
 if(y) {
   print y;
 }
@@ -19,9 +19,15 @@ while(w) {
   print w;
 }
 
+for(int i = 0; i; i = i + 1) {
+ print i;
+}
+
 // small trick
 int a = 5;
 if(not not a) {
   print a;
 }
+
+
 

@@ -33,7 +33,7 @@ class CodeEditor extends React.Component {
         onChange={this.onChange}
         width="100%"
         mode="c_cpp"
-        theme="github"
+        theme="monokai"
         name="aceCodeEditor"
         // onLoad={this.onLoad}
         fontSize={14}
@@ -50,7 +50,18 @@ class CodeEditor extends React.Component {
         setOptions={{
           showLineNumbers: true,
           tabSize: 2,
+          useWorker: false,
         }}
+        annotations={[
+          this.props.showAnnotations
+            ? {
+                row: +this.props.response.line - 1,
+                type: 'error',
+                text: this.props.response.message,
+                column: 0,
+              }
+            : {},
+        ]}
       />
     );
   }
@@ -59,6 +70,11 @@ class CodeEditor extends React.Component {
 CodeEditor.propTypes = {
   code: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  response: PropTypes.objectOf({
+    line: PropTypes.number.isRequired,
+    message: PropTypes.string.isRequired,
+  }).isRequired,
+  showAnnotations: PropTypes.bool.isRequired,
 };
 
 export default CodeEditor;
